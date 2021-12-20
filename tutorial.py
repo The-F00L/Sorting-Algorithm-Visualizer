@@ -49,7 +49,7 @@ def draw(draw_info, algo_name, ascending):
 	controls = draw_info.FONT.render("R - Reset | SPACE - Start Sorting | A - Ascending | D - Descending", 1, draw_info.BLACK)
 	draw_info.window.blit(controls, (draw_info.width/2 - controls.get_width()/2 , 45))
 
-	sorting = draw_info.FONT.render("I - Insertion Sort | B - Bubble Sort", 1, draw_info.BLACK)
+	sorting = draw_info.FONT.render("I - Insertion Sort | B - Bubble Sort | S - Selection Sort", 1, draw_info.BLACK)
 	draw_info.window.blit(sorting, (draw_info.width/2 - sorting.get_width()/2 , 75))
 
 	draw_list(draw_info)
@@ -60,7 +60,7 @@ def draw_list(draw_info, color_positions={}, clear_bg=False):
 	lst = draw_info.lst
 
 	if clear_bg:
-		clear_rect = (draw_info.SIDE_PAD//2, draw_info.TOP_PAD, 
+		clear_rect = (draw_info.SIDE_PAD//2, draw_info.TOP_PAD,
 						draw_info.width - draw_info.SIDE_PAD, draw_info.height - draw_info.TOP_PAD)
 		pygame.draw.rect(draw_info.window, draw_info.BACKGROUND_COLOR, clear_rect)
 
@@ -71,7 +71,7 @@ def draw_list(draw_info, color_positions={}, clear_bg=False):
 		color = draw_info.GRADIENTS[i % 3]
 
 		if i in color_positions:
-			color = color_positions[i] 
+			color = color_positions[i]
 
 		pygame.draw.rect(draw_info.window, color, (x, y, draw_info.block_width, draw_info.height))
 
@@ -125,6 +125,17 @@ def insertion_sort(draw_info, ascending=True):
 
 	return lst
 
+def selection_sort(draw_info,ascending=True):
+	lst = draw_info.lst
+	for i in range(len(lst)):
+		lowest_value_index = i
+		for j in range(i + 1, len(lst)):
+			if (lst[j] < lst[lowest_value_index] and ascending) or (lst[j] > lst[lowest_value_index] and not ascending):
+				lowest_value_index = j
+		lst[i], lst[lowest_value_index] = lst[lowest_value_index],lst[i]
+		draw_list(draw_info, {i-1: draw_info.GREEN, i: draw_info.RED}, True)
+		yield True
+	return lst
 
 def main():
 	run = True
@@ -178,6 +189,12 @@ def main():
 			elif event.key == pygame.K_b and not sorting:
 				sorting_algorithm = bubble_sort
 				sorting_algo_name = "Bubble Sort"
+			elif event.key == pygame.K_s and not sorting:
+				sorting_algorithm = selection_sort
+				sorting_algo_name = "Selection Sort"
+			elif event.key == pygame.K_h and not sorting:
+				sorting_algorithm = heap_sort
+				sorting_algo_name = "Heap Sort"
 
 
 	pygame.quit()
